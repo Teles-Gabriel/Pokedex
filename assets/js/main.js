@@ -1,36 +1,48 @@
-const offset = 0;
-const limit = 12;
-const url = `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`;
+//const offset = 0;
+//const limit = 151;
+//const url = `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`;
+
+const pokemonList = document.getElementById('pokemonList');
+const loadMoreButton = document.getElementById('loadMoreButton');
+const limit = 10;
+let offset = 0;
 
 
-function convertPokemonTypesToLi(pokemonTypes){
-    return pokemonTypes.map((typeSlot) => `<li class="type">${typeSlot.type.name}</li>`)}
+
+function loadMoreItens(offset, limit){
 
 
-function convertPokemonToLi(pokemon){
-    return `
-    <li class="pokemon">
-                <span class='number'>#${pokemon.order}</span>
+    PokeApi.getPokemons(offset, limit).then((pokemons = []) => {
+        const newHtml = pokemons.map((pokemon) => {
+            return `<li class="pokemon ${pokemon.type}">
+                <span class='number'>#${pokemon.number}</span>
                 <span class='name'>${pokemon.name}</span>
                 <div class="detail">
                     <ol class="types">
-                        ${convertPokemonTypesToLi(pokemon.types).join('')}
+                        ${pokemon.types.map((type) => `<li class="type ${type}">${type}</li>`).join('')}
                     </ol>
-
-                    <img src="${pokemon.sprites.other.dream_world.front_default}" 
+                    <img src="${pokemon.photo}" 
                     alt="${pokemon.name}">
                 </div>
-            </li>
-`
+                </li>
+    `
+        }).join('')
+        pokemonList.innerHTML += newHtml
+    })
 }
 
-const pokemonList = document.getElementById('pokemonList')
+loadMoreItens(offset, limit)
 
-PokeApi.getPokemons().then((pokemons = []) => {
+loadMoreButton.addEventListener('click', () => {
+    offset += limit
+    loadMoreItens(offset, limit)
+})
+
+//PokeApi.getPokemons().then((pokemons = []) => {
     
     //const novaLista = pokemons.map((pokemon) => convertPokemonToLi(pokemon))  //usando arrow function não é necessário usar apenas 1 return
 
-    pokemonList.innerHTML += pokemons.map(convertPokemonToLi).join('')
+//    pokemonList.innerHTML += pokemons.map(convertPokemonToLi).join('')
 
     //const newHtml = novaLista.join('')
     //pokemonList.innerHTML += newHtml
@@ -44,7 +56,3 @@ PokeApi.getPokemons().then((pokemons = []) => {
     // }
 
     // console.log(listaItens)
-
-
-
-})
