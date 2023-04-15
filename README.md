@@ -1,1 +1,2 @@
-# Pokedex
+# 
+Projeto realizado no bootcamp.
